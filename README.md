@@ -1,4 +1,6 @@
 
+![Logo](/Concurrency_Logo.png)
+
 # Concurrency Demo with Spring Boot (Java 21)
 
 This project demonstrates core concepts of **Java concurrency** using a RESTful Spring Boot application. It covers:
