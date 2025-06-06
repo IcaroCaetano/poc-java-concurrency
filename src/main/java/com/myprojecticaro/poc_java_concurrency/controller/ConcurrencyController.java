@@ -6,6 +6,8 @@ import com.myprojecticaro.poc_java_concurrency.service.ExecutorServiceDemo;
 import com.myprojecticaro.poc_java_concurrency.service.LockAtomicDemo;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/concurrency")
 public class ConcurrencyController {
@@ -24,9 +26,8 @@ public class ConcurrencyController {
     }
 
     @GetMapping("/executor")
-    public String testExecutorService() {
-        executorServiceDemo.runTasks();
-        return "ExecutorService tasks submitted.";
+    public String testExecutorService() throws Exception {
+        return executorServiceDemo.runTasks();
     }
 
     @GetMapping("/callable")
@@ -37,5 +38,15 @@ public class ConcurrencyController {
     @GetMapping("/atomic")
     public String testAtomicAndLock() {
         return lockAtomicDemo.demo();
+    }
+
+    @GetMapping("/atomic-multithread")
+    public String testAtomicAndLockMultithread(@RequestParam(defaultValue = "5") int threadCount) {
+        try {
+            return lockAtomicDemo.demoMultithread(threadCount);
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
+            return "Error during concurrent execution: " + e.getMessage();
+        }
     }
 }

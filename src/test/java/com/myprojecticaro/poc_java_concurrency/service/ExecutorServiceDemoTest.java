@@ -2,17 +2,23 @@ package com.myprojecticaro.poc_java_concurrency.service;
 
 import org.junit.jupiter.api.Test;
 
-public class ExecutorServiceDemoTest {
+import java.util.concurrent.ExecutionException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class ExecutorServiceDemoTest {
 
     @Test
-    void testRunTasks_printsResults() throws InterruptedException {
+    void testRunTasks_returnsExpectedOutput() throws InterruptedException, ExecutionException {
         ExecutorServiceDemo demo = new ExecutorServiceDemo();
 
-        System.out.println("Starting tasks...");
-        demo.runTasks();
+        String result = demo.runTasks();
 
-        Thread.sleep(1000);
-
-        System.out.println("Tasks completed.");
+        assertNotNull(result);
+        assertTrue(result.contains("ExecutorService results:"), "Result should contain the header");
+        for (int i = 0; i < 5; i++) {
+            assertTrue(result.contains("Task " + i), "Result should contain Task " + i);
+        }
+        assertTrue(result.contains("thread"), "Result should mention thread name");
     }
 }

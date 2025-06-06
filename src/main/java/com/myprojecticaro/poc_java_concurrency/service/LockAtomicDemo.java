@@ -2,6 +2,12 @@ package com.myprojecticaro.poc_java_concurrency.service;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -31,7 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * <p><strong>Note:</strong> Always ensure {@code lock.unlock()} is called inside a {@code finally} block
  * to prevent deadlocks in case of exceptions.</p>
  *
- * @author Your Name
+ * @author Icaro Caetano
  */
 @Service
 public class LockAtomicDemo {
@@ -67,5 +73,39 @@ public class LockAtomicDemo {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Executes the demonstration of atomic and lock-based operations concurrently using multiple threads.
+     *
+     * <p>This method creates a thread pool with the specified number of threads and runs
+     * the {@link #demo()} operation on each thread. The results from each execution are
+     * collected and concatenated into a single string.</p>
+     *
+     * <p>It uses an {@link ExecutorService} to manage the threads and waits for all tasks
+     * to complete before returning the result.</p>
+     *
+     * @param threadCount the number of threads to run concurrently
+     * @return a string containing the concatenated results from all threads
+     * @throws InterruptedException if the execution is interrupted while waiting for threads to finish
+     * @throws ExecutionException if any task throws an exception during execution
+     */
+    public String demoMultithread(int threadCount) throws InterruptedException, ExecutionException {
+
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        List<Future<String>> futures = new ArrayList<>();
+
+        for (int i = 0; i < threadCount; i++) {
+            futures.add(executor.submit(this::demo));
+        }
+
+        StringBuilder result = new StringBuilder();
+        for (Future<String> future : futures) {
+
+            result.append(future.get()).append("\n");
+        }
+
+        executor.shutdown();
+        return result.toString();
     }
 }
