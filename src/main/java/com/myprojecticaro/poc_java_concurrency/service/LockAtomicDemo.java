@@ -60,11 +60,9 @@ public class LockAtomicDemo {
     public String demo() {
         StringBuilder sb = new StringBuilder();
 
-        // Atomic operation
         int atomic = atomicCounter.incrementAndGet();
         sb.append("Atomic counter: ").append(atomic).append("\n");
 
-        // Lock-based operation
         lock.lock();
         try {
             sb.append("Locked section accessed by thread ").append(Thread.currentThread().getName());
