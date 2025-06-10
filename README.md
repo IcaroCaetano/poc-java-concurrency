@@ -8,6 +8,9 @@ This project demonstrates core concepts of **Java concurrency** using a RESTful 
 - `ExecutorService`
 - `Callable` and `Future`
 - `Locks` and `Atomic Variables`
+- `CountDownLatch`
+- `Semaphore`
+- `CompletableFuture`
 
 ## 🧪 How to Run
 
@@ -23,6 +26,9 @@ This project demonstrates core concepts of **Java concurrency** using a RESTful 
 - `GET /concurrency/executor`
 - `GET /concurrency/callable`
 - `GET /concurrency/atomic`
+- `GET /concurrency/countdown`
+- `GET /concurrency/semaphore`
+- `GET /concurrency/completable`
 
 ---
 
@@ -31,8 +37,6 @@ This project demonstrates core concepts of **Java concurrency** using a RESTful 
 ### 1. ExecutorService
 
 `ExecutorService` provides a pool of threads for executing tasks asynchronously.
-
-**Example:**
 
 ```java
 ExecutorService executor = Executors.newFixedThreadPool(3);
@@ -44,16 +48,14 @@ executor.shutdown();
 
 **Use Case:** Execute multiple independent tasks concurrently without manually managing threads.
 
-**Reference:**
-- [Oracle Documentation - ExecutorService](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ExecutorService.html)
+📖 [Oracle Documentation - ExecutorService](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ExecutorService.html)
 
 ---
 
 ### 2. Callable and Future
 
-`Callable` returns a result and can throw exceptions. A `Future` represents the result of an asynchronous computation.
-
-**Example:**
+`Callable` is a functional interface that allows tasks to return results and throw checked exceptions.  
+A `Future` represents the result of an asynchronous computation, which may not be immediately available.
 
 ```java
 Callable<String> task = () -> "Result";
@@ -63,11 +65,10 @@ String result = future.get(); // blocking call
 
 **Endpoint:** `/concurrency/callable`
 
-**Use Case:** When you need the result of an async task (e.g. from a microservice or DB call).
+**Use Case:** Use when you need the result of an asynchronous task — for example, querying an external microservice or database.
 
-**Reference:**
-- [Oracle Documentation - Callable](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Callable.html)
-- [Oracle Documentation - Future](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html)
+📖 [Oracle Docs – Callable](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Callable.html)  
+📖 [Oracle Docs – Future](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Future.html)
 
 ---
 
@@ -75,9 +76,7 @@ String result = future.get(); // blocking call
 
 #### Atomic Variables
 
-`AtomicInteger`, `AtomicBoolean`, etc., provide thread-safe operations without explicit locking.
-
-**Example:**
+Atomic types like `AtomicInteger` provide thread-safe operations without explicit locking.
 
 ```java
 AtomicInteger counter = new AtomicInteger();
@@ -86,9 +85,7 @@ int updated = counter.incrementAndGet();
 
 #### Locks
 
-`ReentrantLock` provides more control than `synchronized`, including timed locks and interruptible locks.
-
-**Example:**
+`ReentrantLock` offers more fine-grained control over synchronization.
 
 ```java
 ReentrantLock lock = new ReentrantLock();
@@ -102,11 +99,58 @@ try {
 
 **Endpoint:** `/concurrency/atomic`
 
-**Use Case:** Protect shared mutable state with locks or atomic operations in multithreaded applications.
+📖 [AtomicInteger Docs](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/atomic/AtomicInteger.html)  
+📖 [ReentrantLock Docs](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html)
 
-**Reference:**
-- [Oracle Documentation - AtomicInteger](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/atomic/AtomicInteger.html)
-- [Oracle Documentation - ReentrantLock](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html)
+---
+
+### 4. CountDownLatch
+
+A `CountDownLatch` allows threads to wait until a set of operations complete.
+
+```java
+CountDownLatch latch = new CountDownLatch(3);
+latch.await(); // main thread waits
+```
+
+**Endpoint:** `/concurrency/countdown`
+
+📖 [CountDownLatch Docs](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CountDownLatch.html)
+
+---
+
+### 5. Semaphore
+
+A `Semaphore` limits the number of threads accessing a resource simultaneously.
+
+```java
+Semaphore semaphore = new Semaphore(2);
+semaphore.acquire();
+try {
+    // access shared resource
+} finally {
+    semaphore.release();
+}
+```
+
+**Endpoint:** `/concurrency/semaphore`
+
+📖 [Semaphore Docs](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Semaphore.html)
+
+---
+
+### 6. CompletableFuture
+
+`CompletableFuture` is used for non-blocking asynchronous programming.
+
+```java
+CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> "Hello");
+future.thenAccept(System.out::println);
+```
+
+**Endpoint:** `/concurrency/completable`
+
+📖 [CompletableFuture Docs](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
 
 ---
 
@@ -122,7 +166,10 @@ src
     │       └── service
     │           ├── ExecutorServiceDemo.java
     │           ├── CallableFutureDemo.java
-    │           └── LockAtomicDemo.java
+    │           ├── LockAtomicDemo.java
+    │           ├── CountDownLatchDemo.java
+    │           ├── SemaphoreDemo.java
+    │           └── CompletableFutureDemo.java
     └── resources
         └── application.yml
 ```
